@@ -2,7 +2,6 @@
 #include "circle.h"
 #include "rect.h"
 #include <cmath>
-#include <unistd.h>
 
 using namespace std;
 
