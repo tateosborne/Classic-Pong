@@ -19,8 +19,6 @@ class Rect : public Shape {
 private:
     dimensions size;
     std::string label;
-    int homeScore;
-    int awayScore;
 public:
     /* Constructors */
     Rect();
@@ -50,8 +48,6 @@ public:
     dimensions getSize() const;
     double getWidth() const;
     double getHeight() const;
-    int getHomeScore() const;
-    int getAwayScore() const;
     double getLeftX() const override;
     double getRightX() const override;
     double getTopY() const override;
@@ -62,8 +58,6 @@ public:
     void setSize(double width, double height);
     void setWidth(double width);
     void setHeight(double height);
-    void setHomeScore(int hS);
-    void setAwayScore(int aS);
     void changeSize(double deltaWidth, double deltaHeight);
     void changeWidth(double delta);
     void changeHeight(double delta);

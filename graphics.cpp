@@ -5,6 +5,8 @@
 #include <memory>
 #include <vector>
 #include <random>
+#include <cmath>
+#include <unistd.h>
 
 using namespace std;
 
@@ -12,6 +14,10 @@ enum screens {
     opening,
     play,
     summary
+};
+enum state {
+    stop,
+    go
 };
 
 GLdouble width, height;
@@ -24,6 +30,7 @@ int yVel = 0;
 int homeScore = 0;
 int awayScore = 0;
 screens currentScreen = opening;
+state mode = stop;
 Rect leftPaddle;
 Rect rightPaddle;
 Rect title(black, {400, 250}, {100, 25}, "PONG");
@@ -31,18 +38,17 @@ Rect rules1(black, {400, 300}, {100, 25}, "First to five wins!");
 Rect rules2(black, {400, 350}, {100, 25}, "Controls:");
 Rect rules3(black, {400, 375}, {100, 25}, "Home: w / s        Away: up / down");
 Rect rules4(black, {400, 475}, {100, 25}, "Press 'b' to begin");
-Rect currentScore(black, {400, 50}, {100, 25}, "Home   " + to_string(homeScore) + "   |   " + to_string(awayScore) + "   Away");
+Rect pressSpace(black, {400, 575}, {100, 25}, "[ press 'space bar' when you're ready ]");
 Rect conclusion(black, {400, 250}, {100, 25}, "Thanks for playing!");
-Rect finalScores(black, {400, 350}, {100, 25}, "HOME " + to_string(homeScore) + " - " + to_string(awayScore) + " AWAY");
 Circle ball;
 
 void initPaddles() {
     leftPaddle.setCenter(5, 400);
-    leftPaddle.setSize(10, 75);
+    leftPaddle.setSize(10, 80);
     leftPaddle.setColor(white);
 
     rightPaddle.setCenter(795, 400);
-    rightPaddle.setSize(10, 75);
+    rightPaddle.setSize(10, 80);
     rightPaddle.setColor(white);
 }
 
@@ -53,43 +59,111 @@ void initBall() {
 }
 
 void initBallDirection() {
-    int initialLR = rand() % 2;
-    int initialUD = rand() % 9;
+    int initialVelocity = rand() % 24;
 
-    if (initialLR == 0) {
-        ball.setXVelocity(-5);
+    // Up down velocity
+    if (initialVelocity == 0) {
+        ball.setXVelocity(sqrt(24.75));
+        ball.setYVelocity(0.5);
     }
-    if (initialLR == 1) {
-        ball.setXVelocity(5);
+    if (initialVelocity == 1) {
+        ball.setXVelocity(-sqrt(24.75));
+        ball.setYVelocity(0.5);
+    }
+    if (initialVelocity == 2) {
+        ball.setXVelocity(sqrt(24.75));
+        ball.setYVelocity(-0.5);
+    }
+    if (initialVelocity == 3) {
+        ball.setXVelocity(-sqrt(24.75));
+        ball.setYVelocity(-0.5);
     }
 
-    if (initialUD == 0) {
-        ball.setYVelocity(-1);
-    }
-    if (initialUD == 1) {
+    if (initialVelocity == 4) {
+        ball.setXVelocity(sqrt(24));
         ball.setYVelocity(1);
     }
-    if (initialUD == 2) {
-        ball.setYVelocity(-2);
+    if (initialVelocity == 5) {
+        ball.setXVelocity(-sqrt(24));
+        ball.setYVelocity(1);
     }
-    if (initialUD == 3) {
+    if (initialVelocity == 6) {
+        ball.setXVelocity(sqrt(24));
+        ball.setYVelocity(-1);
+    }
+    if (initialVelocity == 7) {
+        ball.setXVelocity(-sqrt(24));
+        ball.setYVelocity(-1);
+    }
+
+    if (initialVelocity == 8) {
+        ball.setXVelocity(sqrt(21));
         ball.setYVelocity(2);
     }
-    if (initialUD == 4) {
-        ball.setYVelocity(-3);
+    if (initialVelocity == 9) {
+        ball.setXVelocity(-sqrt(21));
+        ball.setYVelocity(2);
     }
-    if (initialUD == 5) {
+    if (initialVelocity == 10) {
+        ball.setXVelocity(sqrt(21));
+        ball.setYVelocity(-2);
+    }
+    if (initialVelocity == 11) {
+        ball.setXVelocity(-sqrt(21));
+        ball.setYVelocity(-2);
+    }
+
+    if (initialVelocity == 12) {
+        ball.setXVelocity(sqrt(16));
         ball.setYVelocity(3);
     }
-    if (initialUD == 6) {
-        ball.setYVelocity(-4);
+    if (initialVelocity == 13) {
+        ball.setXVelocity(-sqrt(16));
+        ball.setYVelocity(3);
     }
-    if (initialUD == 7) {
+    if (initialVelocity == 14) {
+        ball.setXVelocity(sqrt(16));
+        ball.setYVelocity(-3);
+    }
+    if (initialVelocity == 15) {
+        ball.setXVelocity(-sqrt(16));
+        ball.setYVelocity(-3);
+    }
+
+    if (initialVelocity == 16) {
+        ball.setXVelocity(sqrt(9));
         ball.setYVelocity(4);
     }
-    if (initialUD == 8) {
-        ball.setYVelocity(0);
+    if (initialVelocity == 17) {
+        ball.setXVelocity(-sqrt(9));
+        ball.setYVelocity(4);
     }
+    if (initialVelocity == 18) {
+        ball.setXVelocity(sqrt(9));
+        ball.setYVelocity(-4);
+    }
+    if (initialVelocity == 19) {
+        ball.setXVelocity(-sqrt(9));
+        ball.setYVelocity(-4);
+    }
+
+    if (initialVelocity == 20) {
+        ball.setXVelocity(sqrt(4.75));
+        ball.setYVelocity(4.5);
+    }
+    if (initialVelocity == 21) {
+        ball.setXVelocity(-sqrt(4.75));
+        ball.setYVelocity(4.5);
+    }
+    if (initialVelocity == 22) {
+        ball.setXVelocity(sqrt(4.75));
+        ball.setYVelocity(-4.5);
+    }
+    if (initialVelocity == 23) {
+        ball.setXVelocity(-sqrt(4.75));
+        ball.setYVelocity(-4.5);
+    }
+
 }
 
 void init() {
@@ -134,28 +208,55 @@ void display() {
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+        Rect currentScore(black, {400, 50}, {100, 25},
+                          "Home   " + to_string(homeScore) + "   |   " + to_string(awayScore) + "   Away");
         currentScore.drawText();
+        pressSpace.drawText();
 
         leftPaddle.draw();
         rightPaddle.draw();
-
         ball.draw();
 
-        if (ball.getLeftX() < 0) {
-            currentScore.setAwayScore(currentScore.getAwayScore() + 1);
-            init();
-        }
-        if (ball.getRightX() > 800) {
-            currentScore.setHomeScore(currentScore.getHomeScore() + 1);
-            init();
-        }
-        if (homeScore >= 5 || awayScore >= 5) {
-            currentScreen = summary;
+        if (mode == go) {
+            glViewport(0, 0, width, height);
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(0.0, width, height, 0.0, -1.f, 1.f);
+
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+            Rect currentScore(black, {400, 50}, {100, 25},
+                              "Home   " + to_string(homeScore) + "   |   " + to_string(awayScore) + "   Away");
+            currentScore.drawText();
+
+            leftPaddle.draw();
+            rightPaddle.draw();
+            ball.draw();
+
+            if (ball.getLeftX() < 0) {
+                mode = stop;
+                sleep(0.75);
+                pressSpace.drawText();
+                awayScore++;
+                init();
+            }
+            if (ball.getRightX() > 800) {
+                mode = stop;
+                sleep(0.75);
+                pressSpace.drawText();
+                homeScore++;
+                init();
+            }
         }
 
         glFlush();  // Render now
 
-    } else if (currentScreen == summary) {
+    }
+
+    if (homeScore >= 5 || awayScore >= 5) {
+        currentScreen = summary;
         glViewport(0, 0, width, height);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -165,6 +266,9 @@ void display() {
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+        sleep(0.75);
+
+        Rect finalScores(black, {400, 350}, {100, 25}, "HOME " + to_string(homeScore) + " - " + to_string(awayScore) + " AWAY");
         conclusion.drawText();
         finalScores.drawText();
 
@@ -181,16 +285,20 @@ void kbd(unsigned char key, int x, int y) {
         exit(0);
     }
     if (key == 'b' && currentScreen == opening) {
+        sleep(0.75);
         currentScreen = play;
+    }
+    if (key == 32 && mode == stop) {
+        mode = go;
     }
     if (key == 'w') {
         if (leftPaddle.getTopY() > 0) {
-            leftPaddle.moveY(-20);
+            leftPaddle.moveY(-24);
         }
     }
     if (key == 's') {
         if (leftPaddle.getBottomY() < 800) {
-            leftPaddle.moveY(20);
+            leftPaddle.moveY(24);
         }
     }
 
@@ -201,11 +309,11 @@ void kbdS(int key, int x, int y) {
     switch(key) {
         case GLUT_KEY_DOWN:
             if (rightPaddle.getBottomY() < 800)
-            rightPaddle.moveY(20);
+            rightPaddle.moveY(24);
             break;
         case GLUT_KEY_UP:
             if (rightPaddle.getTopY() > 0) {
-                rightPaddle.moveY(-20);
+                rightPaddle.moveY(-24);
             }
             break;
     }
@@ -224,36 +332,38 @@ void mouse(int button, int state, int x, int y) {
 }
 
 void ballTimer(int dummy) {
+    if (mode == go) {
+        ball.move(ball.getXVelocity(), ball.getYVelocity());
 
-    ball.move(ball.getXVelocity(), ball.getYVelocity());
+        // Handle how ball bounces off top and bottom
+        if (ball.getTopY() < 0) {
+            ball.bounceY();
+        } else if (ball.getBottomY() > 800) {
+            ball.bounceY();
+        }
 
-    // Handle how ball bounces off top and bottom
-    if (ball.getTopY() < 0) {
-        ball.bounceY();
-    } else if (ball.getBottomY() > 800) {
-        ball.bounceY();
+        // Handle how ball bounces off left paddle
+        if (ball.isOverlappingLeftPaddle(leftPaddle)) {
+            ball.bounceX();
+        }
+
+        // Handle how ball bounces off right paddle
+        if (ball.isOverlappingRightPaddle(rightPaddle)) {
+            ball.bounceX();
+        }
     }
-
-    // Handle how ball bounces off left paddle
-    if (ball.isOverlappingLeftPaddle(leftPaddle)){
-        ball.bounceX();
-    }
-
-    // Handle how ball bounces off right paddle
-    if (ball.isOverlappingRightPaddle(rightPaddle)) {
-        ball.bounceX();
-    }
-
     glutPostRedisplay();
     glutTimerFunc(30, ballTimer, dummy);
 }
 
 void ballSpeedTimer(int dummy) {
 
-    ball.setXVelocity(ball.getXVelocity() + dummy);
+    xVel = ball.getXVelocity();
+
+    ball.setXVelocity(xVel * (double)dummy);
 
     glutPostRedisplay();
-    glutTimerFunc(1000, ballSpeedTimer, dummy);
+    glutTimerFunc(500, ballSpeedTimer, dummy);
 }
 
 int main(int argc, char** argv) {
@@ -290,7 +400,7 @@ int main(int argc, char** argv) {
 
     // handles timer
     glutTimerFunc(0, ballTimer, 0);
-    glutTimerFunc(0, ballSpeedTimer, 0);
+    glutTimerFunc(0, ballSpeedTimer, double(11/10));
 
     // Enter the event-processing loop
     glutMainLoop();

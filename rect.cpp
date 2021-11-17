@@ -94,14 +94,6 @@ double Rect::getHeight() const {
     return size.height;
 }
 
-int Rect::getHomeScore() const {
-    return homeScore;
-}
-
-int Rect::getAwayScore() const {
-    return awayScore;
-}
-
 double Rect::getLeftX() const {
     return center.x - (size.width / 2.0);
 }
@@ -134,14 +126,6 @@ void Rect::setWidth(double width) {
 
 void Rect::setHeight(double height) {
     setSize({size.width, height});
-}
-
-void Rect::setHomeScore(int hS) {
-    homeScore = hS;
-}
-
-void Rect::setAwayScore(int aS) {
-    awayScore = aS;
 }
 
 void Rect::changeSize(double deltaWidth, double deltaHeight) {
