@@ -278,7 +278,6 @@ void kbd(unsigned char key, int x, int y) {
         exit(0);
     }
     if (key == 'b' && currentScreen == opening) {
-        sleep(1);
         currentScreen = play;
     }
     if (key == 32 && mode == stop && currentScreen == play) {
@@ -328,7 +327,7 @@ void ballTimer(int dummy) {
     if (mode == go) {
         ball.move(ball.getXVelocity(), ball.getYVelocity());
 
-        // Handle how ball bounces off top and bottom
+        // Handle how ball bounces off top and bottom boundaries
         if (ball.getTopY() < 0) {
             ball.bounceY();
         } else if (ball.getBottomY() > 800) {
@@ -337,17 +336,27 @@ void ballTimer(int dummy) {
 
         // Handle how ball bounces off left paddle
         if (ball.isOverlappingLeftPaddle(leftPaddle)) {
-            ball.bounceX();
+
+            if (((ball.getCenterY() > leftPaddle.getTopY()) && (ball.getCenterY() < leftPaddle.getTopY() + 20)) ||
+                ((ball.getCenterY() > leftPaddle.getBottomY() - 20) && (ball.getCenterY() < leftPaddle.getBottomY()))) {
+                ball.bounceY();
+            }
 
             deltaXVel = 0.5;
+            ball.bounceX();
             ball.setXVelocity(ball.getXVelocity() + deltaXVel);
         }
 
         // Handle how ball bounces off right paddle
         if (ball.isOverlappingRightPaddle(rightPaddle)) {
-            ball.bounceX();
+
+            if (((ball.getCenterY() > rightPaddle.getTopY()) && (ball.getCenterY() < rightPaddle.getTopY() + 20)) ||
+                ((ball.getCenterY() > rightPaddle.getBottomY() - 20) && (ball.getCenterY() < rightPaddle.getBottomY()))) {
+                ball.bounceY();
+            }
 
             deltaXVel = -0.5;
+            ball.bounceX();
             ball.setXVelocity(ball.getXVelocity() + deltaXVel);
         }
     }
