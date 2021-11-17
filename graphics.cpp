@@ -20,6 +20,7 @@ GLdouble width, height;
 int wd;
 const color white(1, 1, 1);
 const color black(0, 0, 0);
+const color red(1, 0, 0);
 
 int homeScore = 0;
 int awayScore = 0;
@@ -50,7 +51,7 @@ void initPaddles() {
 void initBall() {
     ball.setCenter(400, 400);
     ball.setRadius(5);
-    ball.setColor(white);
+    ball.setColor(red);
 }
 
 void initBallDirection() {
