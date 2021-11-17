@@ -281,12 +281,12 @@ void kbd(unsigned char key, int x, int y) {
     if (key == 32 && mode == stop && currentScreen == play) {
         mode = go;
     }
-    if (key == 'w') {
+    if (key == 'w' && mode == go) {
         if (leftPaddle.getTopY() > 0) {
             leftPaddle.moveY(-24);
         }
     }
-    if (key == 's') {
+    if (key == 's' && mode == go) {
         if (leftPaddle.getBottomY() < 800) {
             leftPaddle.moveY(24);
         }
@@ -298,11 +298,12 @@ void kbd(unsigned char key, int x, int y) {
 void kbdS(int key, int x, int y) {
     switch(key) {
         case GLUT_KEY_DOWN:
-            if (rightPaddle.getBottomY() < 800)
-            rightPaddle.moveY(24);
+            if (rightPaddle.getBottomY() < 800 && mode == go) {
+                rightPaddle.moveY(24);
+            }
             break;
         case GLUT_KEY_UP:
-            if (rightPaddle.getTopY() > 0) {
+            if (rightPaddle.getTopY() > 0 && mode == go) {
                 rightPaddle.moveY(-24);
             }
             break;
