@@ -223,7 +223,7 @@ void mouse(int button, int state, int x, int y) {
     glutPostRedisplay();
 }
 
-void timer(int dummy) {
+void ballTimer(int dummy) {
 
     ball.move(ball.getXVelocity(), ball.getYVelocity());
 
@@ -234,103 +234,26 @@ void timer(int dummy) {
         ball.bounceY();
     }
 
-//    // Handle how ball bounces off left paddle
-//    if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getTopY() &&
-//                                                     ball.getCenterY() < leftPaddle.getTopY() + 40)) {
-//        ball.bounceX();
-//        ball.setXVelocity(3);
-//        ball.setYVelocity(-4);
-//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getTopY() + 40 &&
-//                                                       ball.getCenterY() < leftPaddle.getTopY() + 80)) {
-//        ball.bounceX();
-//        ball.setXVelocity(3.5);
-//        ball.setYVelocity(-3);
-//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getTopY() + 80 &&
-//                                                       ball.getCenterY() < leftPaddle.getTopY() + 120)) {
-//        ball.bounceX();
-//        ball.setXVelocity(4);
-//        ball.setYVelocity(-2);
-//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getTopY() + 120 &&
-//                                                       ball.getCenterY() < leftPaddle.getTopY() + 160)) {
-//        ball.bounceX();
-//        ball.setXVelocity(4.5);
-//        ball.setYVelocity(-1);
-//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getTopY() + 160 &&
-//                                                     ball.getCenterY() < leftPaddle.getBottomY() - 160)) {
-//        ball.bounceX();
-//        ball.setXVelocity(5);
-//        ball.setYVelocity(0);
-//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getBottomY() - 160 &&
-//                                                            ball.getCenterY() < leftPaddle.getBottomY() - 120)) {
-//        ball.bounceX();
-//        ball.setXVelocity(4.5);
-//        ball.setYVelocity(1);
-//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getBottomY() - 120 &&
-//                                                            ball.getCenterY() < leftPaddle.getBottomY() - 80)) {
-//        ball.bounceX();
-//        ball.setXVelocity(4);
-//        ball.setYVelocity(2);
-//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getBottomY() - 80 &&
-//                                                            ball.getCenterY() < leftPaddle.getBottomY() - 40)) {
-//        ball.bounceX();
-//        ball.setXVelocity(3.5);
-//        ball.setYVelocity(3);
-//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getBottomY() - 40 &&
-//                                                            ball.getCenterY() < leftPaddle.getBottomY())) {
-//        ball.bounceX();
-//        ball.setXVelocity(3);
-//        ball.setYVelocity(4);
-//    }
-//
-//    // Handle how ball bounces off right paddle
-//    if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getTopY() &&
-//                                                     ball.getCenterY() < rightPaddle.getTopY() + 40)) {
-//        ball.bounceX();
-//        ball.setYVelocity(-4);
-//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getTopY() + 40 &&
-//                                                            ball.getCenterY() < rightPaddle.getTopY() + 80)) {
-//        ball.bounceX();
-//        ball.setYVelocity(-3);
-//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getTopY() + 80 &&
-//                                                            ball.getCenterY() < rightPaddle.getTopY() + 120)) {
-//        ball.bounceX();
-//        ball.setYVelocity(-2);
-//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getTopY() + 120 &&
-//                                                            ball.getCenterY() < rightPaddle.getTopY() + 160)) {
-//        ball.bounceX();
-//        ball.setYVelocity(-1);
-//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getTopY() + 160 &&
-//                                                            ball.getCenterY() < rightPaddle.getBottomY() - 160)) {
-//        ball.bounceX();
-//        ball.setYVelocity(0);
-//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getBottomY() - 160 &&
-//                                                            ball.getCenterY() < rightPaddle.getBottomY() - 120)) {
-//        ball.bounceX();
-//        ball.setYVelocity(1);
-//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getBottomY() - 120 &&
-//                                                            ball.getCenterY() < rightPaddle.getBottomY() - 80)) {
-//        ball.bounceX();
-//        ball.setYVelocity(2);
-//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getBottomY() - 80 &&
-//                                                            ball.getCenterY() < rightPaddle.getBottomY() - 40)) {
-//        ball.bounceX();
-//        ball.setYVelocity(3);
-//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getBottomY() - 40 &&
-//                                                            ball.getCenterY() < rightPaddle.getBottomY())) {
-//        ball.bounceX();
-//        ball.setYVelocity(4);
-//    }
-
+    // Handle how ball bounces off left paddle
     if (ball.isOverlappingLeftPaddle(leftPaddle)){
         ball.bounceX();
     }
 
+    // Handle how ball bounces off right paddle
     if (ball.isOverlappingRightPaddle(rightPaddle)) {
         ball.bounceX();
     }
 
     glutPostRedisplay();
-    glutTimerFunc(30, timer, dummy);
+    glutTimerFunc(30, ballTimer, dummy);
+}
+
+void ballSpeedTimer(int dummy) {
+
+    ball.setXVelocity(ball.getXVelocity() + dummy);
+
+    glutPostRedisplay();
+    glutTimerFunc(1000, ballSpeedTimer, dummy);
 }
 
 int main(int argc, char** argv) {
@@ -366,7 +289,8 @@ int main(int argc, char** argv) {
     glutMouseFunc(mouse);
 
     // handles timer
-    glutTimerFunc(0, timer, 0);
+    glutTimerFunc(0, ballTimer, 0);
+    glutTimerFunc(0, ballSpeedTimer, 0);
 
     // Enter the event-processing loop
     glutMainLoop();
