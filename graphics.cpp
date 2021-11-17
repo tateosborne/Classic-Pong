@@ -56,7 +56,7 @@ void initBall() {
 void initBallDirection() {
     int initialVelocity = rand() % 24;
 
-    // Up down velocity
+    // Set initial velocity
     if (initialVelocity == 0) {
         ball.setXVelocity(sqrt(24.75));
         ball.setYVelocity(0.5);
@@ -259,8 +259,6 @@ void display() {
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        sleep(1);
-
         Rect finalScores(black, {400, 350}, {100, 25}, "HOME " + to_string(homeScore) + " - " + to_string(awayScore) + " AWAY");
         conclusion.drawText();
         finalScores.drawText();
@@ -337,12 +335,18 @@ void ballTimer(int dummy) {
         // Handle how ball bounces off left paddle
         if (ball.isOverlappingLeftPaddle(leftPaddle)) {
 
-            if (((ball.getCenterY() > leftPaddle.getTopY()) && (ball.getCenterY() < leftPaddle.getTopY() + 20)) ||
-                ((ball.getCenterY() > leftPaddle.getBottomY() - 20) && (ball.getCenterY() < leftPaddle.getBottomY()))) {
-                ball.bounceY();
+            if ((ball.getCenterY() > leftPaddle.getTopY()) && (ball.getCenterY() < leftPaddle.getTopY() + 20)) {
+                if (ball.getYVelocity() > 0) {
+                    ball.bounceY();
+                }
+            }
+            if ((ball.getCenterY() > leftPaddle.getBottomY() - 20) && (ball.getCenterY() < leftPaddle.getBottomY())) {
+                if (ball.getYVelocity() < 0) {
+                    ball.bounceY();
+                }
             }
 
-            deltaXVel = 0.5;
+            deltaXVel = 1;
             ball.bounceX();
             ball.setXVelocity(ball.getXVelocity() + deltaXVel);
         }
@@ -350,12 +354,18 @@ void ballTimer(int dummy) {
         // Handle how ball bounces off right paddle
         if (ball.isOverlappingRightPaddle(rightPaddle)) {
 
-            if (((ball.getCenterY() > rightPaddle.getTopY()) && (ball.getCenterY() < rightPaddle.getTopY() + 20)) ||
-                ((ball.getCenterY() > rightPaddle.getBottomY() - 20) && (ball.getCenterY() < rightPaddle.getBottomY()))) {
-                ball.bounceY();
+            if ((ball.getCenterY() > rightPaddle.getTopY()) && (ball.getCenterY() < rightPaddle.getTopY() + 20)) {
+                if (ball.getYVelocity() > 0) {
+                    ball.bounceY();
+                }
+            }
+            if ((ball.getCenterY() > rightPaddle.getBottomY() - 20) && (ball.getCenterY() < rightPaddle.getBottomY())) {
+                if (ball.getYVelocity() < 0) {
+                    ball.bounceY();
+                }
             }
 
-            deltaXVel = -0.5;
+            deltaXVel = -1;
             ball.bounceX();
             ball.setXVelocity(ball.getXVelocity() + deltaXVel);
         }
