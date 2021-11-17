@@ -19,7 +19,6 @@ int wd;
 const color white(1, 1, 1);
 const color black(0, 0, 0);
 
-int initialMove;
 int xVel = 0;
 int yVel = 0;
 int homeScore = 0;
@@ -27,12 +26,14 @@ int awayScore = 0;
 screens currentScreen = opening;
 Rect leftPaddle;
 Rect rightPaddle;
-Rect title(black, {400, 350}, {100, 50}, "PONG (press 'b' to begin)");
-Rect rules1(black, {400, 450}, {100, 50}, "first to five wins!");
-Rect rules2(black, {400, 550}, {100, 50}, "Home/Left: 'w', 's'   ;   Away/Right: 'up arrow', 'down arrow'");
-Rect currentScore(black, {400, 50}, {100, 50}, "Home   " + to_string(homeScore) + "   |   " + to_string(awayScore) + "   Away");
-Rect conclusion(black, {400, 350}, {100, 50}, "Thanks for playing!");
-Rect finalScores(black, {400, 450}, {100, 50}, "HOME " + to_string(homeScore) + " - " + to_string(awayScore) + " AWAY");
+Rect title(black, {400, 250}, {100, 25}, "PONG");
+Rect rules1(black, {400, 300}, {100, 25}, "First to five wins!");
+Rect rules2(black, {400, 350}, {100, 25}, "Controls:");
+Rect rules3(black, {400, 375}, {100, 25}, "Home: w / s        Away: up / down");
+Rect rules4(black, {400, 475}, {100, 25}, "Press 'b' to begin");
+Rect currentScore(black, {400, 50}, {100, 25}, "Home   " + to_string(homeScore) + "   |   " + to_string(awayScore) + "   Away");
+Rect conclusion(black, {400, 250}, {100, 25}, "Thanks for playing!");
+Rect finalScores(black, {400, 350}, {100, 25}, "HOME " + to_string(homeScore) + " - " + to_string(awayScore) + " AWAY");
 Circle ball;
 
 void initPaddles() {
@@ -52,7 +53,43 @@ void initBall() {
 }
 
 void initBallDirection() {
-    int initialMove = rand() % 2;
+    int initialLR = rand() % 2;
+    int initialUD = rand() % 9;
+
+    if (initialLR == 0) {
+        ball.setXVelocity(-5);
+    }
+    if (initialLR == 1) {
+        ball.setXVelocity(5);
+    }
+
+    if (initialUD == 0) {
+        ball.setYVelocity(-1);
+    }
+    if (initialUD == 1) {
+        ball.setYVelocity(1);
+    }
+    if (initialUD == 2) {
+        ball.setYVelocity(-2);
+    }
+    if (initialUD == 3) {
+        ball.setYVelocity(2);
+    }
+    if (initialUD == 4) {
+        ball.setYVelocity(-3);
+    }
+    if (initialUD == 5) {
+        ball.setYVelocity(3);
+    }
+    if (initialUD == 6) {
+        ball.setYVelocity(-4);
+    }
+    if (initialUD == 7) {
+        ball.setYVelocity(4);
+    }
+    if (initialUD == 8) {
+        ball.setYVelocity(0);
+    }
 }
 
 void init() {
@@ -62,13 +99,6 @@ void init() {
     initPaddles();
     initBall();
     initBallDirection();
-
-    if (initialMove == 0) {
-        ball.setXVelocity(-5);
-    }
-    if (initialMove == 1) {
-        ball.setXVelocity(5);
-    }
 }
 
 void initGL() {
@@ -86,9 +116,11 @@ void display() {
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        title.draw();
-        rules1.draw();
-        rules2.draw();
+        title.drawText();
+        rules1.drawText();
+        rules2.drawText();
+        rules3.drawText();
+        rules4.drawText();
 
         glFlush();  // Render now
 
@@ -102,7 +134,7 @@ void display() {
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        currentScore.draw();
+        currentScore.drawText();
 
         leftPaddle.draw();
         rightPaddle.draw();
@@ -110,17 +142,14 @@ void display() {
         ball.draw();
 
         if (ball.getLeftX() < 0) {
-            awayScore++;
-            // wait half a second
+            currentScore.setAwayScore(currentScore.getAwayScore() + 1);
             init();
         }
         if (ball.getRightX() > 800) {
-            homeScore++;
-            // wait half a second
+            currentScore.setHomeScore(currentScore.getHomeScore() + 1);
             init();
         }
         if (homeScore >= 5 || awayScore >= 5) {
-            // wait half a second
             currentScreen = summary;
         }
 
@@ -136,8 +165,8 @@ void display() {
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        conclusion.draw();
-        finalScores.draw();
+        conclusion.drawText();
+        finalScores.drawText();
 
         glFlush();  // Render now
 
@@ -155,10 +184,14 @@ void kbd(unsigned char key, int x, int y) {
         currentScreen = play;
     }
     if (key == 'w') {
-        leftPaddle.moveY(-10);
+        if (leftPaddle.getTopY() > 0) {
+            leftPaddle.moveY(-20);
+        }
     }
     if (key == 's') {
-        leftPaddle.moveY(10);
+        if (leftPaddle.getBottomY() < 800) {
+            leftPaddle.moveY(20);
+        }
     }
 
     glutPostRedisplay();
@@ -167,16 +200,13 @@ void kbd(unsigned char key, int x, int y) {
 void kbdS(int key, int x, int y) {
     switch(key) {
         case GLUT_KEY_DOWN:
-            rightPaddle.moveY(10);
-            break;
-        case GLUT_KEY_LEFT:
-
-            break;
-        case GLUT_KEY_RIGHT:
-
+            if (rightPaddle.getBottomY() < 800)
+            rightPaddle.moveY(20);
             break;
         case GLUT_KEY_UP:
-            rightPaddle.moveY(-10);
+            if (rightPaddle.getTopY() > 0) {
+                rightPaddle.moveY(-20);
+            }
             break;
     }
 
@@ -197,9 +227,105 @@ void timer(int dummy) {
 
     ball.move(ball.getXVelocity(), ball.getYVelocity());
 
-    if (ball.isOverlappingLeftPaddle(leftPaddle)) {
+    // Handle how ball bounces off top and bottom
+    if (ball.getTopY() < 0) {
+        ball.bounceY();
+    } else if (ball.getBottomY() > 800) {
+        ball.bounceY();
+    }
+
+//    // Handle how ball bounces off left paddle
+//    if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getTopY() &&
+//                                                     ball.getCenterY() < leftPaddle.getTopY() + 40)) {
+//        ball.bounceX();
+//        ball.setXVelocity(3);
+//        ball.setYVelocity(-4);
+//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getTopY() + 40 &&
+//                                                       ball.getCenterY() < leftPaddle.getTopY() + 80)) {
+//        ball.bounceX();
+//        ball.setXVelocity(3.5);
+//        ball.setYVelocity(-3);
+//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getTopY() + 80 &&
+//                                                       ball.getCenterY() < leftPaddle.getTopY() + 120)) {
+//        ball.bounceX();
+//        ball.setXVelocity(4);
+//        ball.setYVelocity(-2);
+//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getTopY() + 120 &&
+//                                                       ball.getCenterY() < leftPaddle.getTopY() + 160)) {
+//        ball.bounceX();
+//        ball.setXVelocity(4.5);
+//        ball.setYVelocity(-1);
+//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getTopY() + 160 &&
+//                                                     ball.getCenterY() < leftPaddle.getBottomY() - 160)) {
+//        ball.bounceX();
+//        ball.setXVelocity(5);
+//        ball.setYVelocity(0);
+//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getBottomY() - 160 &&
+//                                                            ball.getCenterY() < leftPaddle.getBottomY() - 120)) {
+//        ball.bounceX();
+//        ball.setXVelocity(4.5);
+//        ball.setYVelocity(1);
+//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getBottomY() - 120 &&
+//                                                            ball.getCenterY() < leftPaddle.getBottomY() - 80)) {
+//        ball.bounceX();
+//        ball.setXVelocity(4);
+//        ball.setYVelocity(2);
+//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getBottomY() - 80 &&
+//                                                            ball.getCenterY() < leftPaddle.getBottomY() - 40)) {
+//        ball.bounceX();
+//        ball.setXVelocity(3.5);
+//        ball.setYVelocity(3);
+//    } else if (ball.isOverlappingLeftPaddle(leftPaddle) && (ball.getCenterY() > leftPaddle.getBottomY() - 40 &&
+//                                                            ball.getCenterY() < leftPaddle.getBottomY())) {
+//        ball.bounceX();
+//        ball.setXVelocity(3);
+//        ball.setYVelocity(4);
+//    }
+//
+//    // Handle how ball bounces off right paddle
+//    if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getTopY() &&
+//                                                     ball.getCenterY() < rightPaddle.getTopY() + 40)) {
+//        ball.bounceX();
+//        ball.setYVelocity(-4);
+//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getTopY() + 40 &&
+//                                                            ball.getCenterY() < rightPaddle.getTopY() + 80)) {
+//        ball.bounceX();
+//        ball.setYVelocity(-3);
+//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getTopY() + 80 &&
+//                                                            ball.getCenterY() < rightPaddle.getTopY() + 120)) {
+//        ball.bounceX();
+//        ball.setYVelocity(-2);
+//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getTopY() + 120 &&
+//                                                            ball.getCenterY() < rightPaddle.getTopY() + 160)) {
+//        ball.bounceX();
+//        ball.setYVelocity(-1);
+//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getTopY() + 160 &&
+//                                                            ball.getCenterY() < rightPaddle.getBottomY() - 160)) {
+//        ball.bounceX();
+//        ball.setYVelocity(0);
+//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getBottomY() - 160 &&
+//                                                            ball.getCenterY() < rightPaddle.getBottomY() - 120)) {
+//        ball.bounceX();
+//        ball.setYVelocity(1);
+//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getBottomY() - 120 &&
+//                                                            ball.getCenterY() < rightPaddle.getBottomY() - 80)) {
+//        ball.bounceX();
+//        ball.setYVelocity(2);
+//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getBottomY() - 80 &&
+//                                                            ball.getCenterY() < rightPaddle.getBottomY() - 40)) {
+//        ball.bounceX();
+//        ball.setYVelocity(3);
+//    } else if (ball.isOverlappingRightPaddle(rightPaddle) && (ball.getCenterY() > rightPaddle.getBottomY() - 40 &&
+//                                                            ball.getCenterY() < rightPaddle.getBottomY())) {
+//        ball.bounceX();
+//        ball.setYVelocity(4);
+//    }
+
+    if (ball.isOverlappingLeftPaddle(leftPaddle)){
         ball.bounceX();
-    } else if (ball.isOverlappingRightPaddle(rightPaddle)) {
+    }
+
+    if (ball.isOverlappingRightPaddle(rightPaddle)) {
         ball.bounceX();
     }
 
