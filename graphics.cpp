@@ -1,10 +1,6 @@
 #include "graphics.h"
 #include "circle.h"
 #include "rect.h"
-#include <iostream>
-#include <memory>
-#include <vector>
-#include <random>
 #include <cmath>
 #include <unistd.h>
 
@@ -25,10 +21,9 @@ int wd;
 const color white(1, 1, 1);
 const color black(0, 0, 0);
 
-int xVel = 0;
-int yVel = 0;
 int homeScore = 0;
 int awayScore = 0;
+double deltaXVel = 0;
 screens currentScreen = opening;
 state mode = stop;
 Rect leftPaddle;
@@ -169,7 +164,7 @@ void initBallDirection() {
 void init() {
     width = 800;
     height = 800;
-    srand(time(0));
+    srand(time(nullptr));
     initPaddles();
     initBall();
     initBallDirection();
@@ -235,16 +230,14 @@ void display() {
             rightPaddle.draw();
             ball.draw();
 
-            if (ball.getLeftX() < 0) {
+            if (ball.getRightX() < 0) {
                 mode = stop;
-                sleep(0.75);
                 pressSpace.drawText();
                 awayScore++;
                 init();
             }
-            if (ball.getRightX() > 800) {
+            if (ball.getLeftX() > 800) {
                 mode = stop;
-                sleep(0.75);
                 pressSpace.drawText();
                 homeScore++;
                 init();
@@ -266,7 +259,7 @@ void display() {
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        sleep(0.75);
+        sleep(1);
 
         Rect finalScores(black, {400, 350}, {100, 25}, "HOME " + to_string(homeScore) + " - " + to_string(awayScore) + " AWAY");
         conclusion.drawText();
@@ -285,10 +278,10 @@ void kbd(unsigned char key, int x, int y) {
         exit(0);
     }
     if (key == 'b' && currentScreen == opening) {
-        sleep(0.75);
+        sleep(1);
         currentScreen = play;
     }
-    if (key == 32 && mode == stop) {
+    if (key == 32 && mode == stop && currentScreen == play) {
         mode = go;
     }
     if (key == 'w') {
@@ -345,25 +338,21 @@ void ballTimer(int dummy) {
         // Handle how ball bounces off left paddle
         if (ball.isOverlappingLeftPaddle(leftPaddle)) {
             ball.bounceX();
+
+            deltaXVel = 0.5;
+            ball.setXVelocity(ball.getXVelocity() + deltaXVel);
         }
 
         // Handle how ball bounces off right paddle
         if (ball.isOverlappingRightPaddle(rightPaddle)) {
             ball.bounceX();
+
+            deltaXVel = -0.5;
+            ball.setXVelocity(ball.getXVelocity() + deltaXVel);
         }
     }
     glutPostRedisplay();
     glutTimerFunc(30, ballTimer, dummy);
-}
-
-void ballSpeedTimer(int dummy) {
-
-    xVel = ball.getXVelocity();
-
-    ball.setXVelocity(xVel * (double)dummy);
-
-    glutPostRedisplay();
-    glutTimerFunc(500, ballSpeedTimer, dummy);
 }
 
 int main(int argc, char** argv) {
@@ -400,7 +389,6 @@ int main(int argc, char** argv) {
 
     // handles timer
     glutTimerFunc(0, ballTimer, 0);
-    glutTimerFunc(0, ballSpeedTimer, double(11/10));
 
     // Enter the event-processing loop
     glutMainLoop();
