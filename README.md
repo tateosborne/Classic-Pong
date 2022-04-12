@@ -1,6 +1,6 @@
-# Pong (Module 4, OEP {2})
+# Classic Pong
 #### Tate Osborne ~ November 19, 2021
-Grab a friend a play the classic Pong game!
+Grab a friend a play Classic Pong!
 
 In this project, I have created the famous _Pong_ game of two paddles that shift on the outside of the
 screen to rally a ball back and forth.
@@ -31,13 +31,3 @@ There are multiple buttons / controls that can be used to navigate the game. The
 - `up arrow`: Use the `up arrow` to move the away paddle up.
 - `down arrow`: Use the `down arrow` to move the away paddle down.
 - `esc`: You can press `esc` at any time to exit the game.
-
-```
-I believe I deserve the full 50 points on this OEP. My reasoning is that I had to implement specific methods
-so that I could create interactions in the game. Furthermore, figuring out how to get the ball to act realistically (i.e.
-making the ball move in a random direction upon beginning, having it bounce off the paddles like in the game, and having
-the velocity of the ball increase over time to make the round difficult as the rally goes on) took a good chunk of time
-and trial and error.. I have included multiple screens that work independently of one-another (i.e. you cannot move the
-paddles until you're on the game screen and space bar has been pressed). Lastly, I have included 7 keyboard
-functionalities which is beyond the required two in the spec sheet. 
-```
